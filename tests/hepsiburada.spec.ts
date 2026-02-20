@@ -45,7 +45,4 @@ test('Hepsiburada Uçtan Uca Test: Adidas 1. Ürün', async ({ page }) => {
     console.log("🏆 Test Başarıyla Tamamlandı!");
     // Tarayıcının hemen kapanıp 'Target closed' hatası vermemesi için:
     await yeniSekme.waitForTimeout(5000);
-
-    console.log("🏆 TEBRİKLER: Tüm senaryo başarıyla tamamlandı!");
-
 });

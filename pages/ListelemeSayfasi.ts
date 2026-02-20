@@ -12,7 +12,6 @@ export class ListelemeSayfasi {
     async sonucDogrula(arananKelime: string) {
         console.log(`🔎 Ekranda "${arananKelime}" doğrulaması yapılıyor...`);
 
-        // Önce elementin sayfada belirmesini (visible) bekle (Hemen aramaya kalkıp timeout olmasın)
         await this.urunBasliklari.first().waitFor({ state: 'visible', timeout: 15000 });
 
         // İlk ürünün metnini alıp içinde "adidas" yazıyor mu diye doğrula
@@ -40,29 +39,23 @@ export class ListelemeSayfasi {
     async seciliFiltreleriDogrula() {
         console.log("🔍 Filtreler kontrol ediliyor...");
 
-        // TAKTİK: Direkt scroll yapmak yerine, elementin sayfaya tam "yapışmasını" bekliyoruz.
-        // Hepsiburada'nın zıplayan menüsünü bu yöntemle ehlileştiriyoruz.
 
         const filtreler = [
             { name: /42/i, label: 'Beden' },
             { name: /Erkek/i, label: 'Cinsiyet' },
-            { name: /Beyaz/i, label: 'Renk' }, // image_e00529'da burada patlıyordu!
+            { name: /Beyaz/i, label: 'Renk' },
             { name: /3000 - 5000/i, label: 'Fiyat' }
         ];
 
         for (const filtre of filtreler) {
             const locator = this.page.getByRole('button', { name: filtre.name }).first();
 
-            // Elementin DOM'a bağlanmasını ve kararlı hale gelmesini bekle
             await locator.waitFor({ state: 'attached', timeout: 15000 });
 
-            // scrollIntoViewIfNeeded() bazen çok agresif olabilir. 
-            // Direkt expect kullanmak, Playwright'ın arkada otomatik deneme yapmasını sağlar.
             await expect(locator).toBeVisible();
             console.log(`✅ ${filtre.label} filtresi doğrulandı.`);
         }
     }
-
     async sonucSayisiniAl(): Promise<number> {
         await this.page.waitForTimeout(2000);
 
@@ -71,7 +64,6 @@ export class ListelemeSayfasi {
 
         const metin = await ozetAlani.innerText();
 
-        // 🚀 DÜZELTME BURADA: Regex içine \+ ekledik ki "10.000+" gibi sayıları da tanısın!
         const eslesme = metin.match(/\(([\d,.\+]+)\s*ürün\)/i);
 
         if (eslesme && eslesme[1]) {
@@ -89,7 +81,7 @@ export class ListelemeSayfasi {
         // Sayfadaki ilk ürün kartını bulur
         const ilkUrun = this.page.locator('li[id^="i"] a').first();
         await ilkUrun.waitFor({ state: 'visible', timeout: 15000 });
-        // Yeni sekme tetiklemesi için tıklar
+
         await ilkUrun.click({ force: true });
     }
 }
